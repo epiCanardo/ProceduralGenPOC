@@ -6,7 +6,8 @@ public class MapGenerator : MonoBehaviour
 {
     public enum DrawMode { NoiseMap, ColourMap, Mesh };
     public DrawMode drawMode;
-    
+    public FilterMode filterMode;
+
     public int mapWidth;
     public int mapHeight;
     public float noiseScale;
@@ -54,14 +55,14 @@ public class MapGenerator : MonoBehaviour
         switch (drawMode)
         {
             case DrawMode.NoiseMap:
-                transform.GetComponent<MapDisplay>().DrawTexture(TextureGenerator.TextureFromHeightMap(noiseMap));
+                transform.GetComponent<MapDisplay>().DrawTexture(TextureGenerator.TextureFromHeightMap(noiseMap, filterMode));
                 break;
             case DrawMode.ColourMap:
-                transform.GetComponent<MapDisplay>().DrawTexture(TextureGenerator.TextureFromColourMap(colourMap, mapWidth, mapHeight));
+                transform.GetComponent<MapDisplay>().DrawTexture(TextureGenerator.TextureFromColourMap(colourMap, mapWidth, mapHeight, filterMode));
                 break;
             case DrawMode.Mesh:
                 transform.GetComponent<MapDisplay>().DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshHeightCurve), 
-                    TextureGenerator.TextureFromColourMap(colourMap, mapWidth, mapHeight));
+                    TextureGenerator.TextureFromColourMap(colourMap, mapWidth, mapHeight, filterMode));
                 break;
             default:
                 break;

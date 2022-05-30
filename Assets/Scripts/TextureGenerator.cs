@@ -4,10 +4,10 @@ using UnityEngine;
 
 public static class TextureGenerator
 {
-    public static Texture2D TextureFromColourMap(Color[] colourMap, int width, int height)
+    public static Texture2D TextureFromColourMap(Color[] colourMap, int width, int height, FilterMode filterMode)
     {
         Texture2D texture = new Texture2D(width, height);
-        texture.filterMode = FilterMode.Point; // pour du pixel art
+        texture.filterMode = filterMode;
         texture.wrapMode = TextureWrapMode.Clamp; // pour les aberrations de bordure 
         texture.SetPixels(colourMap);
         texture.Apply();
@@ -15,7 +15,7 @@ public static class TextureGenerator
         return texture;
     }
 
-    public static Texture2D TextureFromHeightMap(float[,] heightMap)
+    public static Texture2D TextureFromHeightMap(float[,] heightMap, FilterMode filterMode)
     {
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
@@ -30,6 +30,6 @@ public static class TextureGenerator
             }
         }
 
-        return TextureFromColourMap(colourMap, width, height);
+        return TextureFromColourMap(colourMap, width, height, filterMode);
     }
 }
