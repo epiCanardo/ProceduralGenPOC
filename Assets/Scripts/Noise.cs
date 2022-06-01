@@ -4,9 +4,9 @@ using UnityEngine;
 
 public static class Noise
 {
-    public static float[,] GenerateNoiseMap(int mapWidth, int mapHeight, int seed, float scale, int octaves, float persistance, float lacunarity, Vector2 offset)
+    public static float[,] GenerateNoiseMap(int mapchunkSize, int seed, float scale, int octaves, float persistance, float lacunarity, Vector2 offset)
     {
-        float[,] noiseMap = new float[mapWidth, mapHeight];
+        float[,] noiseMap = new float[mapchunkSize, mapchunkSize];
 
         System.Random prng = new System.Random(seed);
         Vector2[] octaveOffsets = new Vector2[octaves];
@@ -23,12 +23,12 @@ public static class Noise
         float minNoiseHeight = float.MaxValue;
 
         // utilisation du centre de la map pour les générations
-        float halfWidth = mapWidth / 2;
-        float halfHeight = mapHeight / 2;
+        float halfWidth = mapchunkSize / 2;
+        float halfHeight = mapchunkSize / 2;
 
-        for (int y = 0; y < mapHeight; y++)
+        for (int y = 0; y < mapchunkSize; y++)
         {
-            for (int x = 0; x < mapWidth; x++)
+            for (int x = 0; x < mapchunkSize; x++)
             {
                 float amplitude = 1;
                 float frequency = 1;
@@ -59,9 +59,9 @@ public static class Noise
             }
         }
 
-        for (int y = 0; y < mapHeight; y++)
+        for (int y = 0; y < mapchunkSize; y++)
         {
-            for (int x = 0; x < mapWidth; x++)
+            for (int x = 0; x < mapchunkSize; x++)
             {
                 // redéfinition de la valeur : 0 si minNoiseHeight, 1 si maxNoiseHeight
                 noiseMap[x, y] = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, noiseMap[x, y]);

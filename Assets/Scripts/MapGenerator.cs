@@ -8,8 +8,10 @@ public class MapGenerator : MonoBehaviour
     public DrawMode drawMode;
     public FilterMode filterMode;
 
-    public int mapWidth;
-    public int mapHeight;
+    public const int mapchunkSize = 241;
+
+    [Range(0, 6)]
+    public int levelOfDetailReduction;
     public float noiseScale;
 
     // détails
@@ -32,20 +34,20 @@ public class MapGenerator : MonoBehaviour
 
     public void GenerateMap()
     {
-        float[,] noiseMap = Noise.GenerateNoiseMap(mapWidth, mapHeight, seed, noiseScale, octaves, persistance, lacunarity, offset);
+        float[,] noiseMap = Noise.GenerateNoiseMap(mapchunkSize, seed, noiseScale, octaves, persistance, lacunarity, offset);
 
-        Color[] colourMap = new Color[mapWidth * mapHeight];
+        Color[] colourMap = new Color[mapchunkSize * mapchunkSize];
         // application des couleurs en fonction des la hauteur
-        for (int y = 0; y < mapHeight; y++)
+        for (int y = 0; y < mapchunkSize; y++)
         {
-            for (int x = 0; x < mapWidth; x++)
+            for (int x = 0; x < mapchunkSize; x++)
             {
                 float currentHeight = noiseMap[x, y]; // la hauteur actuelle
                 for (int i = 0; i < regions.Length; i++)
                 {
                     if (currentHeight <= regions[i].height)
                     {
-                        colourMap[y * mapWidth + x] = regions[i].colour;
+                        colourMap[y * mapchunkSize + x] = regions[i].colour;
                         break;
                     }
                 }
@@ -58,11 +60,11 @@ public class MapGenerator : MonoBehaviour
                 transform.GetComponent<MapDisplay>().DrawTexture(TextureGenerator.TextureFromHeightMap(noiseMap, filterMode));
                 break;
             case DrawMode.ColourMap:
-                transform.GetComponent<MapDisplay>().DrawTexture(TextureGenerator.TextureFromColourMap(colourMap, mapWidth, mapHeight, filterMode));
+                transform.GetComponent<MapDisplay>().DrawTexture(TextureGenerator.TextureFromColourMap(colourMap, mapchunkSize, mapchunkSize, filterMode));
                 break;
             case DrawMode.Mesh:
-                transform.GetComponent<MapDisplay>().DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshHeightCurve), 
-                    TextureGenerator.TextureFromColourMap(colourMap, mapWidth, mapHeight, filterMode));
+                transform.GetComponent<MapDisplay>().DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshHeightCurve, levelOfDetailReduction), 
+                    TextureGenerator.TextureFromColourMap(colourMap, mapchunkSize, mapchunkSize, filterMode));
                 break;
             default:
                 break;
@@ -72,12 +74,6 @@ public class MapGenerator : MonoBehaviour
 
     private void OnValidate()
     {
-        if (mapWidth < 1)
-            mapWidth = 1;
-
-        if (mapHeight < 1)
-            mapHeight = 1;
-
         if (lacunarity < 1)
             lacunarity = 1;
 
