@@ -6,6 +6,8 @@ public class MeshGenerator : MonoBehaviour
 {
     public static MeshData GenerateTerrainMesh(float[,] heightMap, float heightMultiplier, AnimationCurve meshHeightCurve, int levelOfDetailReduction)
     {
+        AnimationCurve heighCurve = new AnimationCurve(meshHeightCurve.keys);
+        
         int width = heightMap.GetLength(0);
         int height = heightMap.GetLength(1);
         
@@ -25,8 +27,9 @@ public class MeshGenerator : MonoBehaviour
         for (int y = 0; y < height; y+= meshSimplification)
         {
             for (int x = 0; x < width; x+= meshSimplification)
-            {
-                meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, meshHeightCurve.Evaluate(heightMap[x, y]) * heightMultiplier, topLeftZ - y);
+            {                
+                meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, heighCurve.Evaluate(heightMap[x, y]) * heightMultiplier, topLeftZ - y);               
+
                 meshData.uvs[vertexIndex] = new Vector2(x / (float)width, y / (float)height);
 
                 // enregistrement des triangles
